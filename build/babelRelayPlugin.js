@@ -1,4 +1,4 @@
 var getbabelRelayPlugin = require('babel-relay-plugin');
-var schema = require('../data/schema.json');
+var SchemaJSON = require('marvelql').SchemaJSON;
 
-module.exports = getbabelRelayPlugin(schema.data);
+module.exports = getbabelRelayPlugin(SchemaJSON.data);

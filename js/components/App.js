@@ -3,31 +3,25 @@ import Relay from 'react-relay';
 
 class App extends React.Component {
   render() {
+    const { children } = this.props;
+
     return (
-      <div>
-        <h1>Widget list</h1>
-        <ul>
-          {this.props.viewer.widgets.edges.map(edge =>
-            <li key={edge.node.id}>{edge.node.name} (ID: {edge.node.id})</li>
-          )}
-        </ul>
-      </div>
+      <div id='marvel-explorer-container'>{children}</div>
     );
   }
 }
 
+App.propTypes = {
+  children: React.PropTypes.any,
+};
+
 export default Relay.createContainer(App, {
   fragments: {
-    viewer: () => Relay.QL`
-      fragment on User {
-        widgets(first: 10) {
-          edges {
-            node {
-              id,
-              name,
-            },
-          },
-        },
+    character: () => Relay.QL`
+      fragment on Character {
+        name,
+        description,
+        thumbnail,
       }
     `,
   },
