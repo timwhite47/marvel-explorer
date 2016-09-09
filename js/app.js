@@ -5,21 +5,46 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Relay from 'react-relay';
 import useRelay from 'react-router-relay';
-import { Router, Route, applyRouterMiddleware, IndexRoute, browserHistory } from 'react-router';
+import { Router, Route, applyRouterMiddleware, IndexRoute, browserHistory, Link } from 'react-router';
 
 const ViewerQueries = {
-  characters: () => Relay.QL`query { characters }`,
+  viewer: () => Relay.QL`query { viewer }`,
 };
 
 const CharacterQueries = {
-  character: () => Relay.QL`query { character(name: $characterId) }`,
+  character: () => Relay.QL`query { character(id: $characterId) }`,
 };
 
 class CharacterList extends React.Component {
   render() {
-    return <div />;
+    const { viewer: { characters } } = this.props;
+
+    const elements = characters.map((character) => (
+      <li key={character.id}>
+        <Link to={`/characters/${character.id}`}>
+          {character.name}
+        </Link>
+      </li>
+    ));
+
+    return <div>
+      <ul>{elements}</ul>
+    </div>;
   }
 }
+
+CharacterList = Relay.createContainer(CharacterList, {
+  fragments: {
+    viewer: () => Relay.QL`
+      fragment on Viewer {
+        characters {
+          id,
+          name,
+        }
+      }
+    `,
+  },
+});
 
 class Character extends React.Component {
   render() {
@@ -28,6 +53,12 @@ class Character extends React.Component {
     return <div>
       <h1>{character.name}</h1>
       <img height='100' src={character.thumbnail} width='100'/>
+      <p>
+        <Link to='/characters/'>
+          {'View All'}
+        </Link>
+      </p>
+
     </div>;
   }
 }

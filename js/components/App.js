@@ -17,11 +17,13 @@ App.propTypes = {
 
 export default Relay.createContainer(App, {
   fragments: {
-    character: () => Relay.QL`
-      fragment on Character {
-        name,
-        description,
-        thumbnail,
+    viewer: () => Relay.QL`
+      fragment on Viewer {
+        characters {
+          name,
+          description,
+          thumbnail,
+        }
       }
     `,
   },
