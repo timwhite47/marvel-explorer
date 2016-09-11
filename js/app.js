@@ -5,6 +5,7 @@ import Character from './components/Character';
 import CharacterList from './components/CharacterList';
 import Loader from './components/Loader';
 import Comic from './components/Comic';
+import Series from './components/Series';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Relay from 'react-relay';
@@ -23,7 +24,13 @@ const CharacterQueries = {
   character: () => Relay.QL`query { character(id: $characterId) }`,
 };
 
+const SeriesQueries = {
+  series: () => Relay.QL`query {series(id: $seriesId) }`
+};
+
 const container = document.getElementById('root');
+
+// TODO: Split out router and routes.
 const AppRouter = <Router
   environment={Relay.Store}
   history={browserHistory}
@@ -34,6 +41,14 @@ const AppRouter = <Router
     path='/'
     queries={ViewerQueries}
   >
+  <Route path='series'>
+    <Route
+      component={Series}
+      path=':seriesId'
+      queries={SeriesQueries}
+      render={({ props }) => props ? <Series {...props}/> : <Loader />}
+      />
+  </Route>
     <Route path='comics'>
       <Route
         component={Comic}

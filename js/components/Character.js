@@ -2,22 +2,26 @@ import React from 'react';
 import Relay from 'react-relay';
 import { Link } from 'react-router';
 import ComicList from './ComicList';
-
+import SeriesList from './SeriesList';
 class Character extends React.Component {
   render() {
-    const { character } = this.props;
+    const { character: { name, thumbnail, description, comics, series } } = this.props;
 
     return <div>
-      <h1>{character.name}</h1>
-      <img height='100' src={character.thumbnail} width='100'/>
-      <p>{character.description}</p>
+      <h1>{name}</h1>
+      <img height='100' src={thumbnail} width='100'/>
+      <p>{description}</p>
       <p>
         <Link to='/characters/'>
           {'View All'}
         </Link>
       </p>
 
-      <ComicList comics={character.comics} />
+      <h1>Series</h1>
+      <SeriesList series={series} />
+
+      <h1>Recent Comics</h1>
+      <ComicList comics={comics} />
     </div>;
   }
 }
@@ -35,6 +39,9 @@ Character = Relay.createContainer(Character, {
         thumbnail,
         comics {
           ${ComicList.getFragment('comics')}
+        }
+        series {
+          ${SeriesList.getFragment('series')}
         }
       }
     `,

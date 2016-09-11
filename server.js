@@ -39,6 +39,7 @@ function startAppServer(callback) {
   appServer.use('/', publicUI);
   appServer.use('/characters*', publicUI);
   appServer.use('/comics*', publicUI);
+  appServer.use('/series*', publicUI);
   appServer.listen(APP_PORT, () => {
     console.log(`App is now running on http://localhost:${APP_PORT}`);
     if (callback) {
