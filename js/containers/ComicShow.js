@@ -1,25 +1,12 @@
 import React from 'react';
 import Relay from 'react-relay';
 import { Link } from 'react-router';
+import CharacterList from '../components/CharacterList';
 
 class Comic extends React.Component {
   renderCharacters() {
     const { comic: { characters } } = this.props;
-
-    const entries = characters.map((character) => (
-      <li key={character.id}>
-        <p>
-          <Link to={`/characters/${character.id}`}>
-            {character.name}
-          </Link>
-          <Link to={`/characters/${character.id}`}>
-            <img height='125' src={character.thumbnail} width='75'/>
-          </Link>
-        </p>
-      </li>
-    ));
-
-    return <ul>{entries}</ul>;
+    return <CharacterList characters={characters}/>;
   }
 
   renderSeries() {
@@ -73,10 +60,8 @@ Comic = Relay.createContainer(Comic, {
            id,
            title,
          },
-         characters {
-           id,
-           name,
-           thumbnail
+         characters(first: 10) {
+           ${CharacterList.getFragment('characters')}
          }
       }
     `,

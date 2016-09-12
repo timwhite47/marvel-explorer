@@ -1,37 +1,39 @@
 import 'babel-polyfill';
 
+import CharacterIndex from './containers/CharacterIndex';
+import ComicShow from './containers/ComicShow';
+import SeriesShow from './containers/SeriesShow';
+import CharacterShow from './containers/CharacterShow';
+
 import App from './components/App';
-import Character from './components/Character';
-import CharacterList from './components/CharacterList';
 import Loader from './components/Loader';
-import Comic from './components/Comic';
-import Series from './components/Series';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Relay from 'react-relay';
 import useRelay from 'react-router-relay';
-import { Router, Route, applyRouterMiddleware, IndexRoute, browserHistory } from 'react-router';
+import { Router, Route, applyRouterMiddleware, IndexRoute, browserHistory, Link } from 'react-router';
 
 const ViewerQueries = {
   viewer: () => Relay.QL`query { viewer }`,
-};
-
-const ComicQueries = {
-  comic: () => Relay.QL`query { comic(id: $comicId) }`,
 };
 
 const CharacterQueries = {
   character: () => Relay.QL`query { character(id: $characterId) }`,
 };
 
-const SeriesQueries = {
-  series: () => Relay.QL`query {series(id: $seriesId) }`
+const ComicQueries = {
+  comic: () => Relay.QL`query { comic(id: $comicId) }`,
+};
+
+const SeriesShowQueries = {
+  series: () => Relay.QL`query {series(id: $seriesId) }`,
 };
 
 const container = document.getElementById('root');
 
 // TODO: Split out router and routes.
-const AppRouter = <Router
+const appRouter = <Router
   environment={Relay.Store}
   history={browserHistory}
   render={applyRouterMiddleware(useRelay)}
@@ -41,37 +43,36 @@ const AppRouter = <Router
     path='/'
     queries={ViewerQueries}
   >
+  <Route path='characters'>
+    <IndexRoute
+      component={CharacterIndex}
+      queries={ViewerQueries}
+    />
+
+    <Route
+      component={CharacterShow}
+      path=':characterId'
+      queries={CharacterQueries}
+    />
+  </Route>
   <Route path='series'>
     <Route
-      component={Series}
+      component={SeriesShow}
       path=':seriesId'
-      queries={SeriesQueries}
-      render={({ props }) => props ? <Series {...props}/> : <Loader />}
+      queries={SeriesShowQueries}
+      render={({ props }) => props ? <SeriesShow {...props}/> : <Loader />}
       />
   </Route>
     <Route path='comics'>
       <Route
-        component={Comic}
+        component={ComicShow}
         path=':comicId'
         queries={ComicQueries}
-        render={({ props }) => props ? <Comic {...props}/> : <Loader />}
+        render={({ props }) => props ? <ComicShow {...props}/> : <Loader />}
         />
     </Route>
-    <Route path='characters'>
-      <IndexRoute
-        component={CharacterList}
-        queries={ViewerQueries}
-        render={({ props }) => props ? <CharacterList {...props}/> : <Loader />}
-      />
-      <Route
-        component={Character}
-        path=':characterId'
-        queries={CharacterQueries}
-        render={({ props }) => props ? <Character {...props}/> : <Loader />}
-      />
 
-    </Route>
   </Route>
 </Router>;
 
-ReactDOM.render(AppRouter, container);
+ReactDOM.render(appRouter, container);

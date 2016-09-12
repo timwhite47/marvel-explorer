@@ -1,11 +1,27 @@
 import React from 'react';
 import Relay from 'react-relay';
 import { Link } from 'react-router';
+import { Media, Image } from 'react-bootstrap';
 
 class ComicList extends React.Component {
-  _renderComicListing(comic) {
-    return (
+  _renderComicListing(edge) {
+    const comic = edge.node;
+    return <Media key={comic.id}>
+      <Media.Left align='top'>
+        <Link to={`/characters/${comic.id}`}>
+          <Image height='250' src={comic.thumbnail.url} width='150'/>
+        </Link>
+      </Media.Left>
+      <Media.Body>
+        <Link to={`/comics/${comic.id}`}>
+          <Media.Heading>{comic.title}</Media.Heading>
+        </Link>
 
+        <p>{comic.description}</p>
+
+      </Media.Body>
+    </Media>;
+    return (
       <li>
         <p>
           <Link to={`/comics/${comic.id}`}>
@@ -21,9 +37,9 @@ class ComicList extends React.Component {
   }
 
   _renderComics() {
-    const { comics } = this.props;
+    const { comics: { edges } } = this.props;
 
-    return comics.map(this._renderComicListing);
+    return edges.map(this._renderComicListing);
   }
 
   render() {
@@ -33,15 +49,23 @@ class ComicList extends React.Component {
   }
 }
 
+ComicList.propTypes = {
+  comics: React.PropTypes.object,
+};
+
 ComicList = Relay.createContainer(ComicList, {
   fragments: {
     comics: () => Relay.QL`
-      fragment on Comic @relay(plural: true) {
-        id,
-        title,
-        thumbnail {
-          url,
-        },
+      fragment on ComicConnection {
+        edges {
+          node {
+            id,
+            title,
+            thumbnail {
+              url,
+            }
+          }
+        }
       }
     `,
   },

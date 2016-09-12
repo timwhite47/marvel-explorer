@@ -58,18 +58,15 @@ function startServers(callback) {
   }
 
   // Compile the schema
-  exec('npm run update-schema', (error, stdout) => {
-    console.log(stdout);
-    let doneTasks = 0;
-    function handleTaskDone() {
-      doneTasks++;
-      if (doneTasks === 1 && callback) {
-        callback();
-      }
+  let doneTasks = 0;
+  function handleTaskDone() {
+    doneTasks++;
+    if (doneTasks === 1 && callback) {
+      callback();
     }
-    // startGraphQLServer(handleTaskDone);
-    startAppServer(handleTaskDone);
-  });
+  }
+
+  startAppServer(handleTaskDone);
 }
 const watcher = chokidar.watch('./data/{database,schema}.js');
 watcher.on('change', path => {
